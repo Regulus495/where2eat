@@ -1,19 +1,30 @@
 class SessionsController < ApplicationController
-  def create
-   user = User.find_by(email: session_params[:email])
+ def new
+ end
 
-   if user&.authenticate(session_params[:password])
-       session[:user_id] = user.id
-       flash[:success] = 'ログインしました'
-       redirect_to root_path
-   else
-       flash[:danger] = 'ログインに失敗しました'
-       render :new
-   end
-  end
-  private
+ def create
+  user = User.find_by(email: session_params[:email])
 
-  def session_params
-    params.require(:session).permit(:email, :password)
+  if user&.authenticate(session_params[:password])
+      session[:user_id] = user.id
+      flash[:success] = 'ログインしました'
+      redirect_to root_path
+  else
+      flash[:danger] = 'ログインに失敗しました'
+      render :new
   end
+ end
+
+ def destroy
+   session.delete(:user_id)
+   flash[:success] = 'ログアウトしました'
+   redirect_to root_path
+ end
+
+ private
+
+ def session_params
+   params.require(:session).permit(:email, :password)
+ end
+
 end
